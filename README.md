@@ -1,6 +1,6 @@
-# FBA Label Printer
+# Shipping Label Printer
 
-A PHP-based label printing system for FBA (Fulfillment by Amazon) shipping labels. This tool generates PDF labels with automatic image processing and positioning for 2x2 label layouts on letter-size paper.
+A PHP-based label printing system for shipping labels. This tool generates PDF labels with automatic image processing and positioning for 2x2 label layouts on letter-size paper.
 
 ## Screenshots
 
