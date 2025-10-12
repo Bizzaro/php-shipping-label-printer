@@ -2,8 +2,19 @@
 
 A PHP-based label printing system for FBA (Fulfillment by Amazon) shipping labels. This tool generates PDF labels with automatic image processing and positioning for 2x2 label layouts on letter-size paper.
 
-![Sample Output](image.png)
-![Sample Output](image-1.png)
+## Screenshots
+
+### Label Layout Diagram
+![Label Layout](layout_diagram.png)
+
+### Generated Label Output
+![Label Output](label_output.png)
+
+### Terminal Usage
+![Terminal Usage](terminal_screenshot.png)
+
+### Sample Output
+The application generates PDF labels with your configured images positioned in the 2x2 layout.
 
 ## Features
 
@@ -55,6 +66,15 @@ php -S 127.0.0.1:8000
 
 # Open in browser
 # Navigate to http://127.0.0.1:8000
+```
+
+### Command Line Usage
+```bash
+# Generate PDF directly
+php index.php > labels.pdf
+
+# View the generated PDF
+evince labels.pdf
 ```
 
 ### Configuration
