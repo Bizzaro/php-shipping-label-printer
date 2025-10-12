@@ -1,0 +1,7 @@
+.DS_Store
+*.pdf
+configs/*
+!configs/accounts/config.json
+!configs/overrides/sample.json
+signatures/*
+accounts.md

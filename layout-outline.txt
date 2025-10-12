@@ -1,0 +1,37 @@
+2x2 Label Layout Outline
+========================
+
+Page Dimensions: Letter size (215.9mm × 279.4mm)
+Label Dimensions: 4" × 5" (101.6mm × 127mm each)
+Layout: 2 columns × 2 rows = 4 labels total
+
+┌─────────────────────────────────────────────────────────────────┐
+│                        LETTER SIZE PAGE                         │
+│  ┌─────────────────┐    10mm    ┌─────────────────┐             │
+│  │   TOP-LEFT      │    gap     │   TOP-RIGHT     │             │
+│  │   (101.6×127)   │            │   (101.6×127)   │             │
+│  │                 │            │                 │             │
+│  └─────────────────┘            └─────────────────┘             │
+│                                                                 │
+│  ┌─────────────────┐            ┌─────────────────┐             │
+│  │  BOTTOM-LEFT    │            │  BOTTOM-RIGHT   │             │
+│  │   (101.6×127)   │            │   (101.6×127)   │             │
+│  │                 │            │                 │             │
+│  └─────────────────┘            └─────────────────┘             │
+└─────────────────────────────────────────────────────────────────┘
+
+Current Configuration:
+- Left margin: 6mm
+- Top margin: 13mm  
+- Column spacing: 10mm (horizontal gap between columns)
+- Row spacing: 0mm (no vertical gap between rows)
+
+Label Positions:
+- Top-left: (6mm, 13mm)
+- Top-right: (117.6mm, 13mm) 
+- Bottom-left: (6mm, 140mm)
+- Bottom-right: (117.6mm, 140mm)
+
+Content: Currently shows "MOVED" text in each label
+Future: Will display images with aspect ratio preservation
+
