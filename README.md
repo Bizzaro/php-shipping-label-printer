@@ -3,15 +3,7 @@
 A PHP-based label printing system for shipping labels. This tool generates PDF labels with automatic image processing and positioning for 2x2 label layouts on letter-size paper.
 
 ## Screenshots
-
-### Label Layout Diagram
-![Label Layout](layout_diagram.png)
-
-### Generated Label Output
-![Label Output](label_output.png)
-
-### Terminal Usage
-![Terminal Usage](terminal_screenshot.png)
+![Label Layout](generated.png)
 
 ### Sample Output
 The application generates PDF labels with your configured images positioned in the 2x2 layout.
