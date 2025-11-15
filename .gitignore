@@ -5,3 +5,17 @@ configs/*
 !configs/overrides/sample.json
 signatures/*
 accounts.md
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.bmp
+*.tiff
+*.ico
+*.webp
+*.svg
+*.heic
+*.heif
+*.heif-srgb
+*.heif-srgb-alpha
+*.heif-srgb-alpha-heic

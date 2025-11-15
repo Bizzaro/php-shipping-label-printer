@@ -104,13 +104,144 @@ $column_spacing = 4.5; // Space between left and right labels: 4.5mm
 $row_spacing = 0; // No space between rows (vertical)
 $bottom_margin = 12; // Bottom labels: 12mm from bottom edge
 
-// Image configuration - supports 1-4 images with position control
-$images = [
-    'top-left' => 'sample.png',    // Top-left label (optional)
-    'top-right' => 'sample2.png',   // Top-right label (optional)
-    'bottom-left' => 'sample3.png', // Bottom-left label (optional)
-    'bottom-right' => 'sample4.png' // Bottom-right label (optional)
-];
+// Configuration: Base directory where images are stored
+// Set to empty string to use script's directory, or set to absolute path like '/var/www/images'
+// If relative path, it will be resolved relative to the script's directory
+$image_base_directory = ''; // Default: use script's directory
+
+// Function to resolve image path from base directory
+function resolveImagePath($relativePath) {
+    global $image_base_directory;
+    
+    // If base directory is empty, use script's directory
+    if (empty($image_base_directory)) {
+        $baseDir = __DIR__;
+    } else {
+        // If base directory is absolute, use it directly
+        if (strpos($image_base_directory, '/') === 0 || 
+            (PHP_OS_FAMILY === 'Windows' && preg_match('/^[A-Z]:/', $image_base_directory))) {
+            $baseDir = $image_base_directory;
+        } else {
+            // Relative path: resolve relative to script's directory
+            $baseDir = __DIR__ . '/' . $image_base_directory;
+        }
+    }
+    
+    // Normalize the base directory path (must exist)
+    $baseDir = realpath($baseDir);
+    if ($baseDir === false) {
+        // Base directory doesn't exist, return false
+        return false;
+    }
+    
+    // Normalize the relative path manually (remove .. and .)
+    // Split path into components
+    $parts = explode('/', $relativePath);
+    $normalized = [];
+    
+    foreach ($parts as $part) {
+        if ($part === '' || $part === '.') {
+            // Skip empty parts and current directory
+            continue;
+        } elseif ($part === '..') {
+            // Go up one directory
+            if (!empty($normalized)) {
+                array_pop($normalized);
+            } else {
+                // Trying to go above base directory - security violation
+                return false;
+            }
+        } else {
+            $normalized[] = $part;
+        }
+    }
+    
+    // Reconstruct the normalized relative path
+    $normalizedPath = implode('/', $normalized);
+    
+    // Combine base directory with normalized relative path
+    $fullPath = $baseDir . '/' . $normalizedPath;
+    
+    // Security check: ensure the full path is within base directory
+    // Use realpath to normalize, but if file doesn't exist, manually check
+    $resolvedPath = realpath($fullPath);
+    if ($resolvedPath !== false) {
+        // File exists, use realpath result
+        // Verify it's still within base directory (should always be, but double-check)
+        if (strpos($resolvedPath, $baseDir) !== 0) {
+            return false;
+        }
+        return $resolvedPath;
+    } else {
+        // File doesn't exist yet, but path is valid
+        // Construct absolute path and verify it would be within base directory
+        $absolutePath = $baseDir . '/' . $normalizedPath;
+        // Normalize separators
+        $absolutePath = str_replace('\\', '/', $absolutePath);
+        $baseDirNormalized = str_replace('\\', '/', $baseDir);
+        
+        // Check that absolute path starts with base directory
+        if (strpos($absolutePath, $baseDirNormalized) !== 0) {
+            return false;
+        }
+        
+        return $absolutePath;
+    }
+}
+
+// Function to safely read and sanitize URL parameters for image paths
+function getImageFromUrl($position) {
+    if (!isset($_GET[$position])) {
+        return null;
+    }
+    
+    $value = trim($_GET[$position]);
+    
+    // Return null for empty strings
+    if (empty($value)) {
+        return null;
+    }
+    
+    // Normalize path separators: convert backslashes to forward slashes
+    $value = str_replace('\\', '/', $value);
+    
+    // Explicit absolute path prevention: reject paths starting with /
+    if (strpos($value, '/') === 0) {
+        return null;
+    }
+    
+    // Basic sanitization: remove path traversal attempts and null bytes
+    $value = str_replace(['../', '..\\', "\0"], '', $value);
+    
+    // Only allow alphanumeric, dots, hyphens, underscores, and forward slashes
+    // This prevents directory traversal while allowing subdirectories
+    if (!preg_match('/^[a-zA-Z0-9._\/-]+$/', $value)) {
+        return null;
+    }
+    
+    return $value;
+}
+
+// Define valid position keys
+$validPositions = ['top-left', 'top-right', 'bottom-left', 'bottom-right'];
+
+// Build images array exclusively from URL parameters
+$images = [];
+
+foreach ($validPositions as $position) {
+    $urlImage = getImageFromUrl($position);
+    if ($urlImage !== null) {
+        // Resolve the full path from base directory
+        $resolvedPath = resolveImagePath($urlImage);
+        if ($resolvedPath !== false) {
+            // Only add if path resolution succeeded (file exists and is within base directory)
+            $images[$position] = $resolvedPath;
+        }
+        // If path resolution failed (invalid or outside base directory), skip it
+        // This prevents access to files outside the configured base directory
+    }
+    // If no URL parameter provided, position is not set (will be filtered out)
+}
 
 // Filter out empty image entries
 $images = array_filter($images, function($img) {
