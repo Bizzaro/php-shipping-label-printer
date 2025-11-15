@@ -6,6 +6,12 @@ A PHP-based label printing system for low-volume shipping needs. This tool gener
 
 This tool is designed for low-volume shipping scenarios where purchasing a dedicated thermal printer isn't cost-effective. Instead, it generates PDFs that can be printed on standard laser printers using premade adhesive label sheets. The labels are formatted in a 2x2 grid layout on letter-size paper, making it easy to print multiple labels at once.
 
+**Benefits:**
+- **Saves Time**: No more cutting, taping, or manually attaching labels to packages
+- **Saves Money**: Eliminates the need for packing tape and reduces time spent on manual label application
+- **Professional Appearance**: Clean, properly sized labels that look professional
+- **Cost-Effective**: Works with standard laser printers and premade label sheets - no expensive thermal printer required
+
 ## Screenshots
 ![Label Layout](generated.png)
 
@@ -129,12 +135,19 @@ $image_base_directory = 'images';
 
 ## How It Works
 
-This tool is ideal for low-volume shipping (approximately 2 outgoing shipments per month) where a thermal printer investment isn't justified. Instead, you can:
+This tool is ideal for low-volume shipping (approximately 2 outgoing shipments per month) where a thermal printer investment isn't justified. It eliminates the time-consuming and wasteful process of printing labels on regular paper and manually taping them to packages.
 
+**Traditional Method (Time-Consuming):**
+- Print label on regular paper
+- Cut out the label
+- Use packing tape to attach it to the package
+- Waste time and tape on each shipment
+
+**With This Tool:**
 1. **Prepare Your Labels**: Create or obtain shipping label images (from carriers like USPS, UPS, FedEx, etc.)
 2. **Generate PDF**: Use URL parameters to specify which labels to print
 3. **Print on Laser Printer**: Print the generated PDF on standard premade adhesive label sheets
-4. **Apply Labels**: Peel and stick the labels onto your packages
+4. **Apply Labels**: Simply peel and stick - no cutting or taping required
 
 **Technical Process:**
 1. **URL Parameter Processing**: Reads image paths from URL GET parameters (e.g., `?top-left=image.png`)
