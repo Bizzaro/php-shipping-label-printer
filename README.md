@@ -16,6 +16,9 @@ The application generates PDF labels with your configured images positioned in t
 - **Smart Positioning**: Images are automatically centered and scaled to preserve aspect ratio
 - **Image Validation**: Validates image files before processing
 - **Error Handling**: Graceful error handling with visual feedback for invalid images
+- **Dynamic Image Loading**: Specify images via URL parameters without editing code
+- **Configurable Image Storage**: Set custom base directory for image files
+- **Security Features**: Path traversal protection and input validation
 
 ## Label Specifications
 
@@ -60,6 +63,27 @@ php -S 127.0.0.1:8000
 # Navigate to http://127.0.0.1:8000
 ```
 
+### Dynamic Image Loading via URL Parameters
+
+You can specify images directly in the URL without editing code:
+
+```bash
+# Single image
+http://127.0.0.1:8000/index.php?top-left=label.png
+
+# Multiple images
+http://127.0.0.1:8000/index.php?top-left=label.png&bottom-right=invoice.png
+
+# All positions
+http://127.0.0.1:8000/index.php?top-left=a.png&top-right=b.png&bottom-left=c.png&bottom-right=d.png
+```
+
+**Available positions:**
+- `top-left` - Top-left label position
+- `top-right` - Top-right label position
+- `bottom-left` - Bottom-left label position
+- `bottom-right` - Bottom-right label position
+
 ### Command Line Usage
 ```bash
 # Generate PDF directly
@@ -71,16 +95,22 @@ evince labels.pdf
 
 ### Configuration
 
-Edit the `$images` array in `index.php` to specify which images to use for each label position:
+#### Image Base Directory
+
+Edit the `$image_base_directory` variable in `index.php` (line 110) to configure where images are stored:
 
 ```php
-$images = [
-    'top-left' => 'sample.png',      // Top-left label
-    'top-right' => 'sample2.png',    // Top-right label  
-    'bottom-left' => 'sample3.png', // Bottom-left label
-    'bottom-right' => 'sample4.png' // Bottom-right label
-];
+// Use script's directory (default)
+$image_base_directory = '';
+
+// Use absolute path
+$image_base_directory = '/var/www/images';
+
+// Use relative path (relative to script directory)
+$image_base_directory = 'images';
 ```
+
+**Note:** The base directory must exist. If it doesn't exist, images will not be resolved.
 
 ### Supported Image Formats
 - JPEG (.jpg, .jpeg)
@@ -89,11 +119,14 @@ $images = [
 
 ## How It Works
 
-1. **Image Validation**: Checks if image files exist and are in supported formats
-2. **Smart Processing**: Analyzes image dimensions and determines optimal orientation
-3. **Automatic Rotation**: Rotates images 90° if it provides better fit
-4. **Scaling & Centering**: Scales images to fit label dimensions while preserving aspect ratio
-5. **PDF Generation**: Creates PDF with properly positioned images using FPDF
+1. **URL Parameter Processing**: Reads image paths from URL GET parameters (e.g., `?top-left=image.png`)
+2. **Path Sanitization**: Validates and sanitizes input paths to prevent security issues
+3. **Path Resolution**: Resolves image paths relative to the configured base directory
+4. **Image Validation**: Checks if image files exist and are in supported formats
+5. **Smart Processing**: Analyzes image dimensions and determines optimal orientation
+6. **Automatic Rotation**: Rotates images 90° if it provides better fit
+7. **Scaling & Centering**: Scales images to fit label dimensions while preserving aspect ratio
+8. **PDF Generation**: Creates PDF with properly positioned images using FPDF
 
 ## File Structure
 
@@ -111,6 +144,21 @@ php-fba-label-printer/
 └── README.md
 ```
 
+## Security
+
+The application includes several security features to prevent unauthorized file access:
+
+- **Path Traversal Protection**: Automatically sanitizes and blocks `../` patterns in URL parameters
+- **Absolute Path Prevention**: Rejects paths starting with `/` to prevent access to system directories
+- **Input Validation**: Only allows safe characters (alphanumeric, dots, hyphens, underscores, forward slashes)
+- **Base Directory Restriction**: All image paths are resolved relative to the configured base directory
+- **Path Normalization**: Converts backslashes to forward slashes and normalizes path components
+
+**Security Notes:**
+- Images can only be accessed from within the configured base directory
+- Path traversal attempts (e.g., `../etc/passwd`) are automatically blocked
+- Invalid or malicious paths are rejected before file system access
+
 ## Error Handling
 
 The system provides visual feedback for various error conditions:
@@ -118,6 +166,7 @@ The system provides visual feedback for various error conditions:
 - **Invalid format**: Shows "Invalid image format" message  
 - **Unsupported type**: Shows "Unsupported image type" message
 - **Processing error**: Shows "PROCESSING ERROR" message
+- **Invalid paths**: Paths outside the base directory or with invalid characters are silently rejected
 
 ## Contributing
 
