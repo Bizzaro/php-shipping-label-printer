@@ -1,12 +1,16 @@
 # Shipping Label Printer
 
-A PHP-based label printing system for shipping labels. This tool generates PDF labels with automatic image processing and positioning for 2x2 label layouts on letter-size paper.
+A PHP-based label printing system for low-volume shipping needs. This tool generates PDF labels designed for premade printable labels with sticky backs, allowing you to print shipping labels on a standard laser printer without investing in a thermal printer. Perfect for small businesses or individuals with low shipping volumes (~2 outgoing shipments per month).
+
+## Overview
+
+This tool is designed for low-volume shipping scenarios where purchasing a dedicated thermal printer isn't cost-effective. Instead, it generates PDFs that can be printed on standard laser printers using premade adhesive label sheets. The labels are formatted in a 2x2 grid layout on letter-size paper, making it easy to print multiple labels at once.
 
 ## Screenshots
 ![Label Layout](generated.png)
 
 ### Sample Output
-The application generates PDF labels with your configured images positioned in the 2x2 layout.
+The application generates PDF labels with your configured images positioned in the 2x2 layout, ready to print on premade sticky label sheets.
 
 ## Features
 
@@ -22,17 +26,23 @@ The application generates PDF labels with your configured images positioned in t
 
 ## Label Specifications
 
+Designed for standard premade adhesive label sheets compatible with laser printers:
+
 - **Page Size**: Letter (215.9mm × 279.4mm)
 - **Label Dimensions**: 4" × 5" (101.6mm × 127mm each)
-- **Layout**: 2 columns × 2 rows = 4 labels total
+- **Layout**: 2 columns × 2 rows = 4 labels per sheet
 - **Margins**: 4mm left, 12mm top/bottom
 - **Column Spacing**: 4.5mm between columns
+
+**Note**: Ensure your label sheets match these dimensions for proper alignment.
 
 ## Requirements
 
 - PHP 7.0 or higher
 - ImageMagick (for image rotation)
 - FPDF library (included)
+- Standard laser printer
+- Premade adhesive label sheets (4" × 5" labels, 2×2 layout on letter-size paper)
 
 ## Installation
 
@@ -119,6 +129,14 @@ $image_base_directory = 'images';
 
 ## How It Works
 
+This tool is ideal for low-volume shipping (approximately 2 outgoing shipments per month) where a thermal printer investment isn't justified. Instead, you can:
+
+1. **Prepare Your Labels**: Create or obtain shipping label images (from carriers like USPS, UPS, FedEx, etc.)
+2. **Generate PDF**: Use URL parameters to specify which labels to print
+3. **Print on Laser Printer**: Print the generated PDF on standard premade adhesive label sheets
+4. **Apply Labels**: Peel and stick the labels onto your packages
+
+**Technical Process:**
 1. **URL Parameter Processing**: Reads image paths from URL GET parameters (e.g., `?top-left=image.png`)
 2. **Path Sanitization**: Validates and sanitizes input paths to prevent security issues
 3. **Path Resolution**: Resolves image paths relative to the configured base directory
