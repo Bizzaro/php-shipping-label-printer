@@ -1,6 +1,30 @@
 <?php
 require('lib/fpdf.php');
 
+// Function to convert GIF to PNG using ImageMagick (since FPDF requires GD extension for GIF)
+function convertGifToPng($imagePath) {
+    // Check if file is a GIF
+    $imageInfo = getimagesize($imagePath);
+    if (!$imageInfo || $imageInfo[2] != IMAGETYPE_GIF) {
+        return $imagePath; // Not a GIF, return original path
+    }
+    
+    // Create temporary PNG file path
+    $tempPngPath = sys_get_temp_dir() . '/' . uniqid('gif_convert_', true) . '.png';
+    
+    // Use ImageMagick convert command to convert GIF to PNG
+    $command = "convert '$imagePath' '$tempPngPath' 2>/dev/null";
+    $result = shell_exec($command);
+    
+    // Check if conversion succeeded
+    if (file_exists($tempPngPath)) {
+        return $tempPngPath;
+    } else {
+        // Conversion failed, return original path (will likely fail later, but at least we tried)
+        return $imagePath;
+    }
+}
+
 // Function to rotate image in place using ImageMagick convert command
 function rotateImageInPlace($imagePath) {
     // Use ImageMagick convert command to rotate 90 degrees clockwise, overwriting original
@@ -287,6 +311,9 @@ for ($row = 0; $row < $rows; $row++) {
             $validation = validateImage($imagePath);
             
             if ($validation['valid']) {
+                // Convert GIF to PNG if needed (FPDF requires GD extension for GIF, but we can use ImageMagick)
+                $imagePath = convertGifToPng($imagePath);
+                
                 $imageData = processImageForLabel($imagePath, $label_width, $label_height);
                 
                 if ($imageData) {
